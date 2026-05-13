@@ -809,67 +809,246 @@ body {
   <h2 class="section-title">Decision Tree — Which workflow applies to you?</h2>
   <p class="section-desc">Your starting point determines which phases are required. Use this decision tree before beginning any NP study.</p>
 
-  <div class="decision-tree">
-    <div class="dt-title">🌿 Starting point: your compound set</div>
+  <div class="decision-tree" id="quiz-container">
+    <div class="dt-title">🌿 Answer 3 quick questions — get your personalised workflow</div>
 
-    <div class="dt-question">
-      <div class="dt-q-text">Q1 — What is the status of your compounds?</div>
-      <div class="dt-options">
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Unknown herbal extract, no prior characterisation</span> — Start from Phase A (TCMSP screening required). All 9 phases apply.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Partially characterised extract with some known actives</span> — Screen unknowns via TCMSP; include confirmed compounds directly. Phases A (partial) through I.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Fully standardised with confirmed phytochemical markers</span> — Skip TCMSP screening. Start from Phase B (target prediction). Report ADME for completeness only.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Pure isolated compound or approved drug</span> — Skip Phases A entirely. Begin directly at Phase B with SMILES retrieval.</span>
-        </div>
+    <!-- Progress bar -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+      <div style="flex:1;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+        <div id="quiz-progress" style="height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width 0.4s ease;"></div>
+      </div>
+      <span id="quiz-step-label" style="font-size:11px;color:rgba(255,255,255,0.4);white-space:nowrap;">Step 0 of 3</span>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-slide" id="q1" style="display:block;">
+      <div class="dt-q-text" style="font-size:15px;margin-bottom:16px;">Q1 — What is the status of your compounds?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="quiz-btn" onclick="answer(1,'A')">🌿 Unknown herbal extract — no prior characterisation</button>
+        <button class="quiz-btn" onclick="answer(1,'B')">🔬 Partially characterised extract with some known actives</button>
+        <button class="quiz-btn" onclick="answer(1,'C')">✅ Fully standardised with confirmed phytochemical markers</button>
+        <button class="quiz-btn" onclick="answer(1,'D')">💊 Pure isolated compound or approved drug</button>
       </div>
     </div>
 
-    <div class="dt-question">
-      <div class="dt-q-text">Q2 — What is your publication target?</div>
-      <div class="dt-options">
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Conference abstract (ongoing study)</span> — Phases A–D sufficient. PPI network and docking stated as ongoing.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Q2 journal (e.g. International Wound Journal)</span> — Phases A–G required. MD simulation optional.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Q1 journal (e.g. Phytomedicine IF 8.3)</span> — All phases A–I required including MD simulation and wet lab concordance table.</span>
-        </div>
+    <!-- Q2 -->
+    <div class="quiz-slide" id="q2" style="display:none;">
+      <button class="quiz-back" onclick="goBack(2)">← Back</button>
+      <div class="dt-q-text" style="font-size:15px;margin-bottom:16px;">Q2 — What is your publication target?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="quiz-btn" onclick="answer(2,'A')">📋 Conference abstract (ongoing study)</button>
+        <button class="quiz-btn" onclick="answer(2,'B')">📄 Q2 journal (e.g. International Wound Journal)</button>
+        <button class="quiz-btn" onclick="answer(2,'C')">🏆 Q1 journal (e.g. Phytomedicine IF 8.3)</button>
       </div>
     </div>
 
-    <div class="dt-question">
-      <div class="dt-q-text">Q3 — Do you have existing wet lab data?</div>
-      <div class="dt-options">
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Yes — extensive preclinical bioactivity data</span> — Your strongest asset. Phase I concordance table becomes the centrepiece of the paper. Frame the study as "computational validation of experimental findings."</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">Yes — limited data</span> — Use what you have for Phase I. Clearly distinguish predicted targets from experimentally confirmed ones.</span>
-        </div>
-        <div class="dt-option">
-          <span class="dt-arrow">→</span>
-          <span><span class="dt-result">No wet lab data</span> — NP + docking study only. Clearly frame as hypothesis-generating. Molecular docking becomes your primary validation layer. Target Q2 journals.</span>
-        </div>
+    <!-- Q3 -->
+    <div class="quiz-slide" id="q3" style="display:none;">
+      <button class="quiz-back" onclick="goBack(3)">← Back</button>
+      <div class="dt-q-text" style="font-size:15px;margin-bottom:16px;">Q3 — Do you have existing wet lab data?</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button class="quiz-btn" onclick="answer(3,'A')">🧪 Yes — extensive preclinical bioactivity data</button>
+        <button class="quiz-btn" onclick="answer(3,'B')">🔭 Yes — limited data only</button>
+        <button class="quiz-btn" onclick="answer(3,'C')">❌ No wet lab data at all</button>
       </div>
     </div>
+
+    <!-- Result -->
+    <div class="quiz-slide" id="q-result" style="display:none;"></div>
   </div>
+
+  <style>
+    .quiz-btn {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.85);
+      font-size: 13px;
+      padding: 13px 16px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+    .quiz-btn:hover {
+      background: rgba(45,212,191,0.15);
+      border-color: var(--accent);
+      color: white;
+      transform: translateX(4px);
+    }
+    .quiz-btn.selected {
+      background: rgba(45,212,191,0.2);
+      border-color: var(--accent);
+      color: white;
+    }
+    .quiz-back {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.4);
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+      margin-bottom: 14px;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .quiz-back:hover { color: var(--accent); }
+    .quiz-result-box {
+      background: rgba(45,212,191,0.08);
+      border: 1px solid rgba(45,212,191,0.3);
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-bottom: 14px;
+    }
+    .quiz-phase-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #0A1628;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin: 3px 3px 3px 0;
+    }
+    .quiz-phase-badge.skip {
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5);
+      text-decoration: line-through;
+    }
+    .quiz-restart-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 16px;
+      transition: all 0.2s;
+    }
+    .quiz-restart-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .quiz-slide { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+
+  <script>
+    const quizAnswers = {};
+
+    function updateProgress(step) {
+      const pct = (step / 3) * 100;
+      document.getElementById('quiz-progress').style.width = pct + '%';
+      document.getElementById('quiz-step-label').textContent = step === 3 ? 'Done!' : `Step ${step} of 3`;
+    }
+
+    function answer(q, choice) {
+      quizAnswers['q' + q] = choice;
+      document.getElementById('q' + q).style.display = 'none';
+      if (q < 3) {
+        document.getElementById('q' + (q + 1)).style.display = 'block';
+        updateProgress(q);
+      } else {
+        updateProgress(3);
+        showResult();
+      }
+    }
+
+    function goBack(currentQ) {
+      document.getElementById('q' + currentQ).style.display = 'none';
+      document.getElementById('q' + (currentQ - 1)).style.display = 'block';
+      updateProgress(currentQ - 2);
+    }
+
+    function showResult() {
+      const q1 = quizAnswers.q1, q2 = quizAnswers.q2, q3 = quizAnswers.q3;
+
+      // Determine starting phase
+      let startPhase, compoundNote;
+      if (q1 === 'A') { startPhase = 'A'; compoundNote = 'Start from Phase A — TCMSP screening required. All 9 phases apply.'; }
+      else if (q1 === 'B') { startPhase = 'A*'; compoundNote = 'Phase A partial — screen unknowns via TCMSP, include confirmed compounds directly.'; }
+      else if (q1 === 'C') { startPhase = 'B'; compoundNote = 'Skip TCMSP. Start from Phase B. Report ADME in supplementary table only.'; }
+      else { startPhase = 'B'; compoundNote = 'Skip Phase A entirely. Begin at Phase B with SMILES retrieval.'; }
+
+      // Determine required phases based on publication target
+      let requiredPhases, pubNote;
+      if (q2 === 'A') { requiredPhases = ['A','B','C','D']; pubNote = 'Phases A–D sufficient for a conference abstract. State PPI and docking as ongoing.'; }
+      else if (q2 === 'B') { requiredPhases = ['A','B','C','D','E','F','G']; pubNote = 'Phases A–G required. MD simulation (Phase H) is optional but strengthens the paper.'; }
+      else { requiredPhases = ['A','B','C','D','E','F','G','H','I']; pubNote = 'All 9 phases required including MD simulation and wet lab concordance table.'; }
+
+      // Wet lab framing
+      let wetLabNote;
+      if (q3 === 'A') wetLabNote = '🧪 <strong>Strong asset:</strong> Phase I concordance table becomes the centrepiece. Frame as "computational validation of experimental findings."';
+      else if (q3 === 'B') wetLabNote = '🔭 <strong>Use what you have:</strong> Include limited data in Phase I. Clearly distinguish predicted targets from confirmed ones.';
+      else wetLabNote = '❌ <strong>Computational study only:</strong> Frame as hypothesis-generating. Molecular docking is your primary validation. Target Q2 journals.';
+
+      // Skip Phase A if starting from B
+      const skipA = (q1 === 'C' || q1 === 'D');
+
+      const phases = ['A','B','C','D','E','F','G','H','I'];
+      const phaseLabels = {
+        'A': 'Phase A', 'B': 'Phase B', 'C': 'Phase C', 'D': 'Phase D',
+        'E': 'Phase E', 'F': 'Phase F', 'G': 'Phase G', 'H': 'Phase H', 'I': 'Phase I'
+      };
+      const phaseNames = {
+        'A': 'Compound Collection', 'B': 'Target Prediction', 'C': 'Disease Genes',
+        'D': 'Venn Overlap', 'E': 'PPI Network', 'F': 'GO & KEGG',
+        'G': 'Molecular Docking', 'H': 'MD Simulation', 'I': 'Wet Lab Concordance'
+      };
+
+      let badgesHTML = phases.map(p => {
+        const required = requiredPhases.includes(p);
+        const skipped = skipA && p === 'A';
+        const cls = (!required || skipped) ? 'quiz-phase-badge skip' : 'quiz-phase-badge';
+        const symbol = (!required || skipped) ? '✕' : '✓';
+        return `<span class="${cls}" title="${phaseNames[p]}">${symbol} ${phaseLabels[p]}</span>`;
+      }).join('');
+
+      const resultHTML = `
+        <div style="font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">✦ Your Personalised Workflow</div>
+
+        <div class="quiz-result-box">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Compound Status</div>
+          <div style="font-size:13px;color:white;line-height:1.5;">${compoundNote}</div>
+        </div>
+
+        <div class="quiz-result-box">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Publication Target</div>
+          <div style="font-size:13px;color:white;line-height:1.5;">${pubNote}</div>
+        </div>
+
+        <div class="quiz-result-box">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px;">Wet Lab Data</div>
+          <div style="font-size:13px;color:white;line-height:1.5;">${wetLabNote}</div>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;">Required Phases</div>
+          <div>${badgesHTML}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:8px;">Hover badges to see phase names · Strikethrough = not required for your workflow</div>
+        </div>
+
+        <button class="quiz-restart-btn" onclick="restartQuiz()">↺ Start over</button>
+      `;
+
+      const resultEl = document.getElementById('q-result');
+      resultEl.innerHTML = resultHTML;
+      resultEl.style.display = 'block';
+    }
+
+    function restartQuiz() {
+      quizAnswers.q1 = quizAnswers.q2 = quizAnswers.q3 = null;
+      document.getElementById('q-result').style.display = 'none';
+      document.getElementById('q1').style.display = 'block';
+      document.getElementById('q2').style.display = 'none';
+      document.getElementById('q3').style.display = 'none';
+      document.getElementById('quiz-progress').style.width = '0%';
+      document.getElementById('quiz-step-label').textContent = 'Step 0 of 3';
+    }
+  </script>
 </section>
 
 <!-- PHASE A -->
