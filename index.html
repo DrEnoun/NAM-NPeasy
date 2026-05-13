@@ -1,0 +1,1928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Pharmacology — Core Framework Tutorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:   #0A1628;
+  --navy2:  #112240;
+  --blue:   #1E3A5F;
+  --accent: #2DD4BF;
+  --aclt:   #CCFBF1;
+  --gold:   #F59E0B;
+  --goldlt: #FEF3C7;
+  --coral:  #F87171;
+  --corllt: #FEE2E2;
+  --sage:   #34D399;
+  --sagelt: #D1FAE5;
+  --lilac:  #A78BFA;
+  --lillt:  #EDE9FE;
+  --sky:    #38BDF8;
+  --skylt:  #E0F2FE;
+  --white:  #FFFFFF;
+  --off:    #F8FAFD;
+  --gray1:  #F1F5F9;
+  --gray2:  #E2E8F0;
+  --gray3:  #94A3B8;
+  --gray4:  #64748B;
+  --gray5:  #334155;
+  --dark:   #0F172A;
+  --r:      12px;
+  --rs:     8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--off);
+  color: var(--dark);
+  line-height: 1.6;
+}
+
+/* ── SIDEBAR NAV ───────────────────────────────── */
+.sidebar {
+  position: fixed;
+  left: 0; top: 0;
+  width: 220px; height: 100vh;
+  background: var(--navy);
+  overflow-y: auto;
+  z-index: 100;
+  padding: 24px 0 40px;
+  transition: transform 0.3s;
+}
+.sidebar-logo {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 16px;
+}
+.sidebar-logo .logo-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 15px;
+  color: var(--white);
+  line-height: 1.3;
+}
+.sidebar-logo .logo-sub {
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.nav-group { margin-bottom: 6px; }
+.nav-group-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gray3);
+  padding: 6px 20px 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 20px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: all 0.15s;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover, .nav-item.active {
+  color: white;
+  background: rgba(255,255,255,0.06);
+  border-left-color: var(--accent);
+}
+.nav-item .nav-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+.nav-item.active .nav-dot { opacity: 1; }
+
+/* ── MAIN CONTENT ──────────────────────────────── */
+.main {
+  margin-left: 220px;
+  min-height: 100vh;
+}
+
+/* ── HERO ──────────────────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 50%, var(--blue) 100%);
+  padding: 60px 48px 52px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(45,212,191,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; left: 40%;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-tag {
+  display: inline-block;
+  background: rgba(45,212,191,0.15);
+  border: 1px solid rgba(45,212,191,0.3);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 38px;
+  color: white;
+  line-height: 1.15;
+  margin-bottom: 12px;
+  max-width: 540px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
+  max-width: 500px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hero-pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── CONTENT SECTIONS ──────────────────────────── */
+.content-section {
+  padding: 44px 48px;
+  border-bottom: 1px solid var(--gray2);
+}
+.content-section:last-child { border-bottom: none; }
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.section-tag .tag-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 26px;
+  color: var(--dark);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.section-desc {
+  font-size: 13.5px;
+  color: var(--gray4);
+  max-width: 600px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+/* ── DECISION TREE ─────────────────────────────── */
+.decision-tree {
+  background: var(--navy);
+  border-radius: var(--r);
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.dt-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+}
+.dt-question {
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--rs);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border-left: 3px solid var(--accent);
+}
+.dt-q-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 10px;
+}
+.dt-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dt-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
+.dt-arrow {
+  font-size: 12px;
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-weight: 700;
+}
+.dt-result {
+  font-weight: 600;
+  color: white;
+}
+
+/* ── PHASE CARDS ───────────────────────────────── */
+.phase-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray2);
+}
+.phase-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.phase-info { flex: 1; }
+.phase-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  line-height: 1.2;
+}
+.phase-when {
+  font-size: 11.5px;
+  color: var(--gray4);
+  margin-top: 2px;
+}
+
+/* ── STEP BLOCKS ───────────────────────────────── */
+.step-block {
+  background: white;
+  border-radius: var(--r);
+  border: 1px solid var(--gray2);
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.step-block:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+.step-header-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  user-select: none;
+}
+.step-num-badge {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: white;
+}
+.step-title-group { flex: 1; }
+.step-title-main {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+}
+.step-title-sub {
+  font-size: 11px;
+  color: var(--gray4);
+  margin-top: 1px;
+}
+.step-chevron {
+  font-size: 14px;
+  color: var(--gray3);
+  transition: transform 0.2s;
+}
+.step-block.open .step-chevron { transform: rotate(180deg); }
+
+.step-body {
+  display: none;
+  padding: 0 18px 18px;
+  border-top: 1px solid var(--gray1);
+}
+.step-block.open .step-body { display: block; }
+
+/* ── PROTOCOL POINTS ───────────────────────────── */
+.protocol-list {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0;
+}
+.protocol-list li {
+  display: flex;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--gray5);
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray1);
+  line-height: 1.55;
+}
+.protocol-list li:last-child { border-bottom: none; }
+.prot-num {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  background: var(--gray1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray4);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.prot-text strong { color: var(--dark); font-weight: 600; }
+
+/* ── THRESHOLD TABLE ───────────────────────────── */
+.thresh-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 12px 0;
+  border-radius: var(--rs);
+  overflow: hidden;
+}
+.thresh-table thead th {
+  background: var(--navy);
+  color: white;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+}
+.thresh-table tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gray1);
+  vertical-align: top;
+}
+.thresh-table tbody tr:nth-child(even) td { background: var(--gray1); }
+.thresh-table tbody tr:last-child td { border-bottom: none; }
+.code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--navy);
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ── TOOL BADGES ───────────────────────────────── */
+.tools-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+.tool-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  cursor: default;
+}
+.tb-a  { background: var(--sagelt);  color: #065F46; border-color: #6EE7B7; }
+.tb-b  { background: var(--skylt);   color: #0C4A6E; border-color: #7DD3FC; }
+.tb-c  { background: var(--goldlt);  color: #78350F; border-color: #FCD34D; }
+.tb-d  { background: var(--aclt);    color: #134E4A; border-color: #5EEAD4; }
+.tb-e  { background: var(--sagelt);  color: #065F46; border-color: #6EE7B7; }
+.tb-f  { background: var(--goldlt);  color: #78350F; border-color: #FCD34D; }
+.tb-g  { background: var(--corllt);  color: #7F1D1D; border-color: #FCA5A5; }
+.tb-h  { background: var(--lillt);   color: #4C1D95; border-color: #C4B5FD; }
+.tb-ref{ background: var(--gray1);   color: var(--gray4); border-color: var(--gray2); }
+
+/* ── CALLOUT BOXES ─────────────────────────────── */
+.callout {
+  border-radius: var(--rs);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 12.5px;
+  line-height: 1.65;
+}
+.callout strong { font-weight: 700; }
+.callout-blue   { background: var(--skylt);   color: #0C4A6E; border-left: 3px solid #38BDF8; }
+.callout-green  { background: var(--sagelt);  color: #065F46; border-left: 3px solid #34D399; }
+.callout-amber  { background: var(--goldlt);  color: #78350F; border-left: 3px solid #F59E0B; }
+.callout-red    { background: var(--corllt);  color: #7F1D1D; border-left: 3px solid #F87171; }
+.callout-purple { background: var(--lillt);   color: #4C1D95; border-left: 3px solid #A78BFA; }
+.callout-navy   { background: var(--navy);    color: rgba(255,255,255,0.8); border-left: 3px solid var(--accent); }
+
+/* ── SKIP BOX ──────────────────────────────────── */
+.skip-box {
+  background: #F0FDF9;
+  border: 1px solid #5EEAD4;
+  border-radius: var(--rs);
+  padding: 12px 16px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: #134E4A;
+  line-height: 1.6;
+}
+.skip-box strong { font-weight: 700; }
+
+/* ── QUICK REF CARD ────────────────────────────── */
+.qr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.qr-cell {
+  background: white;
+  border-radius: var(--rs);
+  border: 1px solid var(--gray2);
+  padding: 14px;
+}
+.qr-cell-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.qr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 11.5px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--gray1);
+}
+.qr-row:last-child { border-bottom: none; }
+.qr-label { color: var(--gray4); }
+.qr-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--dark);
+  text-align: right;
+}
+
+/* ── REFERENCE LIST ────────────────────────────── */
+.ref-item {
+  font-size: 12px;
+  color: var(--gray4);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray1);
+  line-height: 1.6;
+}
+.ref-item:last-child { border-bottom: none; }
+.ref-item .ref-num {
+  font-weight: 700;
+  color: var(--navy);
+  margin-right: 4px;
+}
+.ref-item .ref-doi {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+/* ── PROGRESS TRACKER ──────────────────────────── */
+.progress-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin: 16px 0;
+}
+.prog-item {
+  background: white;
+  border-radius: var(--rs);
+  border: 1px solid var(--gray2);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.prog-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.prog-text { flex: 1; }
+.prog-name { font-size: 11.5px; font-weight: 600; color: var(--dark); }
+.prog-status { font-size: 10px; color: var(--gray3); margin-top: 1px; }
+
+/* ── MOBILE MENU TOGGLE ────────────────────────── */
+.menu-toggle {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  z-index: 200;
+  background: var(--navy);
+  border: none;
+  color: white;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  font-size: 18px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── RESPONSIVE ────────────────────────────────── */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .hero { padding: 60px 20px 40px; }
+  .hero h1 { font-size: 28px; }
+  .content-section { padding: 32px 20px; }
+  .menu-toggle { display: flex; }
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+  .overlay.active { display: block; }
+}
+
+/* ── COLORS PER PHASE ──────────────────────────── */
+.ph-a { --ph: #34D399; --ph-bg: #D1FAE5; --ph-dark: #065F46; }
+.ph-b { --ph: #38BDF8; --ph-bg: #E0F2FE; --ph-dark: #0C4A6E; }
+.ph-c { --ph: #F59E0B; --ph-bg: #FEF3C7; --ph-dark: #78350F; }
+.ph-d { --ph: #2DD4BF; --ph-bg: #CCFBF1; --ph-dark: #134E4A; }
+.ph-e { --ph: #34D399; --ph-bg: #D1FAE5; --ph-dark: #065F46; }
+.ph-f { --ph: #F59E0B; --ph-bg: #FEF3C7; --ph-dark: #78350F; }
+.ph-g { --ph: #F87171; --ph-bg: #FEE2E2; --ph-dark: #7F1D1D; }
+.ph-h { --ph: #A78BFA; --ph-bg: #EDE9FE; --ph-dark: #4C1D95; }
+.ph-i { --ph: #34D399; --ph-bg: #D1FAE5; --ph-dark: #065F46; }
+
+.phase-badge { background: var(--ph-bg); color: var(--ph-dark); }
+.section-tag { color: var(--ph-dark); }
+.section-tag .tag-dot { background: var(--ph); }
+</style>
+
+  <!-- PWA Meta Tags -->
+  <meta name="application-name" content="NP Framework">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NP Framework">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0A1628">
+  <meta name="msapplication-TileColor" content="#0A1628">
+  <meta name="msapplication-TileImage" content="icons/icon-144.png">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Apple Touch Icons -->
+  <link rel="apple-touch-icon" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="96x96" href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+</head>
+<body>
+
+<button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<!-- ── SIDEBAR ─────────────────────────────────── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-title">Network Pharmacology</div>
+    <div class="logo-sub">Core Framework Tutorial</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Introduction</div>
+    <a class="nav-item active" href="#intro" onclick="setActive(this)">
+      <span class="nav-dot"></span> What is NP?
+    </a>
+    <a class="nav-item" href="#when" onclick="setActive(this)">
+      <span class="nav-dot"></span> When to use it
+    </a>
+    <a class="nav-item" href="#decision" onclick="setActive(this)">
+      <span class="nav-dot"></span> Decision tree
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase A — Compounds</div>
+    <a class="nav-item" href="#phA" onclick="setActive(this)">
+      <span class="nav-dot"></span> Compound collection
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase B — Targets</div>
+    <a class="nav-item" href="#phB" onclick="setActive(this)">
+      <span class="nav-dot"></span> Target prediction
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase C — Disease</div>
+    <a class="nav-item" href="#phC" onclick="setActive(this)">
+      <span class="nav-dot"></span> Disease gene collection
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase D — Overlap</div>
+    <a class="nav-item" href="#phD" onclick="setActive(this)">
+      <span class="nav-dot"></span> Venn overlap analysis
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase E — Network</div>
+    <a class="nav-item" href="#phE" onclick="setActive(this)">
+      <span class="nav-dot"></span> PPI network
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase F — Enrichment</div>
+    <a class="nav-item" href="#phF" onclick="setActive(this)">
+      <span class="nav-dot"></span> GO &amp; KEGG analysis
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase G — Docking</div>
+    <a class="nav-item" href="#phG" onclick="setActive(this)">
+      <span class="nav-dot"></span> Molecular docking
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase H — MD</div>
+    <a class="nav-item" href="#phH" onclick="setActive(this)">
+      <span class="nav-dot"></span> MD simulation
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Phase I — Validation</div>
+    <a class="nav-item" href="#phI" onclick="setActive(this)">
+      <span class="nav-dot"></span> Wet lab validation
+    </a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Reference</div>
+    <a class="nav-item" href="#quickref" onclick="setActive(this)">
+      <span class="nav-dot"></span> Quick reference card
+    </a>
+    <a class="nav-item" href="#refs" onclick="setActive(this)">
+      <span class="nav-dot"></span> Citations
+    </a>
+  </div>
+</nav>
+
+<!-- ── MAIN ────────────────────────────────────── -->
+<main class="main">
+
+<!-- HERO -->
+<div class="hero" id="intro">
+  <div class="hero-tag">Core Framework · Version 1.0</div>
+  <h1>Network <em>Pharmacology</em><br>Complete Tutorial</h1>
+  <p class="hero-sub">A general-purpose, step-by-step protocol for applying network pharmacology to any herbal, polyherbal, or compound-based pharmacological study. Designed as a reusable core framework.</p>
+  <div class="hero-pills">
+    <span class="hero-pill">9 Phases</span>
+    <span class="hero-pill">22 Steps</span>
+    <span class="hero-pill">All Tools Free</span>
+    <span class="hero-pill">Q1 Journal Standard</span>
+    <span class="hero-pill">Decision Trees Included</span>
+  </div>
+</div>
+
+<!-- WHAT IS NP -->
+<section class="content-section ph-a" id="when">
+  <div class="section-tag">
+    <span class="tag-dot"></span> Introduction
+  </div>
+  <h2 class="section-title">What is Network Pharmacology?</h2>
+  <p class="section-desc">Network pharmacology is a systems-level computational approach that maps multi-compound, multi-target, multi-pathway interactions simultaneously. It answers the question: <em>how do multiple compounds in a natural product work together to produce a biological effect?</em></p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:20px;">
+    <div style="background:white;border-radius:var(--r);border:1px solid var(--gray2);padding:18px;">
+      <div style="font-size:22px;margin-bottom:8px;">🎯</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;">Multi-target mapping</div>
+      <div style="font-size:12px;color:var(--gray4);line-height:1.6;">Identifies all proteins your compounds are predicted to engage — not just one target, but the whole network.</div>
+    </div>
+    <div style="background:white;border-radius:var(--r);border:1px solid var(--gray2);padding:18px;">
+      <div style="font-size:22px;margin-bottom:8px;">🌿</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;">Polypharmacology explanation</div>
+      <div style="font-size:12px;color:var(--gray4);line-height:1.6;">Explains why polyherbal formulations work better than isolated compounds — different compounds engage different targets.</div>
+    </div>
+    <div style="background:white;border-radius:var(--r);border:1px solid var(--gray2);padding:18px;">
+      <div style="font-size:22px;margin-bottom:8px;">🔬</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;">Hypothesis generation</div>
+      <div style="font-size:12px;color:var(--gray4);line-height:1.6;">Predicts which targets and pathways to validate experimentally, guiding wet lab work rationally.</div>
+    </div>
+    <div style="background:white;border-radius:var(--r);border:1px solid var(--gray2);padding:18px;">
+      <div style="font-size:22px;margin-bottom:8px;">📋</div>
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;">Regulatory documentation</div>
+      <div style="font-size:12px;color:var(--gray4);line-height:1.6;">Provides mechanistic evidence for regulatory submissions — the "why" that transforms efficacy data into a mechanism claim.</div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>When NOT to use network pharmacology alone:</strong> NP is a hypothesis-generating tool, not a proof of mechanism. Computational predictions must always be validated — by existing wet lab data, molecular docking, or new experiments. Never publish NP results without a validation layer.
+  </div>
+</section>
+
+<!-- DECISION TREE -->
+<section class="content-section ph-b" id="decision">
+  <div class="section-tag">
+    <span class="tag-dot"></span> Before You Start
+  </div>
+  <h2 class="section-title">Decision Tree — Which workflow applies to you?</h2>
+  <p class="section-desc">Your starting point determines which phases are required. Use this decision tree before beginning any NP study.</p>
+
+  <div class="decision-tree">
+    <div class="dt-title">🌿 Starting point: your compound set</div>
+
+    <div class="dt-question">
+      <div class="dt-q-text">Q1 — What is the status of your compounds?</div>
+      <div class="dt-options">
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Unknown herbal extract, no prior characterisation</span> — Start from Phase A (TCMSP screening required). All 9 phases apply.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Partially characterised extract with some known actives</span> — Screen unknowns via TCMSP; include confirmed compounds directly. Phases A (partial) through I.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Fully standardised with confirmed phytochemical markers</span> — Skip TCMSP screening. Start from Phase B (target prediction). Report ADME for completeness only.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Pure isolated compound or approved drug</span> — Skip Phases A entirely. Begin directly at Phase B with SMILES retrieval.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dt-question">
+      <div class="dt-q-text">Q2 — What is your publication target?</div>
+      <div class="dt-options">
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Conference abstract (ongoing study)</span> — Phases A–D sufficient. PPI network and docking stated as ongoing.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Q2 journal (e.g. International Wound Journal)</span> — Phases A–G required. MD simulation optional.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Q1 journal (e.g. Phytomedicine IF 8.3)</span> — All phases A–I required including MD simulation and wet lab concordance table.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dt-question">
+      <div class="dt-q-text">Q3 — Do you have existing wet lab data?</div>
+      <div class="dt-options">
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Yes — extensive preclinical bioactivity data</span> — Your strongest asset. Phase I concordance table becomes the centrepiece of the paper. Frame the study as "computational validation of experimental findings."</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">Yes — limited data</span> — Use what you have for Phase I. Clearly distinguish predicted targets from experimentally confirmed ones.</span>
+        </div>
+        <div class="dt-option">
+          <span class="dt-arrow">→</span>
+          <span><span class="dt-result">No wet lab data</span> — NP + docking study only. Clearly frame as hypothesis-generating. Molecular docking becomes your primary validation layer. Target Q2 journals.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE A -->
+<section class="content-section ph-a" id="phA">
+  <div class="section-tag ph-a">
+    <span class="tag-dot"></span> Phase A
+  </div>
+  <div class="phase-header ph-a">
+    <div class="phase-badge ph-a" style="font-size:20px;">🌿</div>
+    <div class="phase-info">
+      <div class="phase-name">Compound Collection &amp; ADME Filtering</div>
+      <div class="phase-when">When: required for unknown/uncharacterised extracts · optional for confirmed compounds</div>
+    </div>
+  </div>
+
+  <div class="skip-box">
+    <strong>⚡ Skip rule:</strong> If your compounds are already experimentally confirmed (standardised extract with validated markers, isolated pure compounds, or approved drugs), skip the TCMSP screening step. Go directly to Step A3 (SMILES retrieval) and report ADME values in a supplementary table for convention only. State this clearly in your methods: <em>"Compounds were included based on prior experimental characterisation. ADME properties are reported for completeness."</em>
+  </div>
+
+  <!-- Step A1 -->
+  <div class="step-block" id="sa1">
+    <div class="step-header-bar" onclick="toggleStep('sa1')">
+      <div class="step-num-badge" style="background:#34D399;">A1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Compound retrieval from herb databases</div>
+        <div class="step-title-sub">TCMSP · HERB database · Published literature</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>tcmsp-e.com</strong> and click "Herbs" in the navigation menu</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Search each herb by scientific name (e.g. <em>Cinnamomum zeylanicum</em>). Try common names or related species if no result.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Click the herb name to open its ingredient list. Note the total number of compounds listed.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Apply ADME filters: set <strong>OB ≥ 30%</strong> and <strong>DL ≥ 0.18</strong>. Record all compounds that pass.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Supplement with <strong>HERB database</strong> (herb.ac.cn) for herbs with limited TCMSP coverage.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Add any compounds confirmed in published literature for that herb even if not in TCMSP.</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Merge compound lists from all herbs. Remove duplicates. This is your <strong>active compound pool</strong>.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Parameter</th><th>Threshold</th><th>What it means</th><th>Reference</th></tr></thead>
+        <tbody>
+          <tr><td>Oral Bioavailability (OB)</td><td><span class="code">≥ 30%</span></td><td>Minimum absorption from oral route to reach systemic circulation</td><td>Ru et al. 2014</td></tr>
+          <tr><td>Drug-likeness (DL)</td><td><span class="code">≥ 0.18</span></td><td>Resemblance to known drug molecules based on Lipinski descriptors</td><td>Ru et al. 2014</td></tr>
+          <tr><td>Lipinski MW</td><td><span class="code">≤ 500 Da</span></td><td>Molecular weight — larger molecules have poor absorption</td><td>Lipinski 2001</td></tr>
+          <tr><td>Lipinski LogP</td><td><span class="code">≤ 5</span></td><td>Lipophilicity — determines membrane permeability</td><td>Lipinski 2001</td></tr>
+        </tbody>
+      </table>
+      <div class="tools-row">
+        <span class="tool-badge tb-a">tcmsp-e.com</span>
+        <span class="tool-badge tb-a">herb.ac.cn</span>
+        <span class="tool-badge tb-ref">Ref: Ru et al. 2014 · Lipinski 2001</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step A2 -->
+  <div class="step-block" id="sa2">
+    <div class="step-header-bar" onclick="toggleStep('sa2')">
+      <div class="step-num-badge" style="background:#34D399;">A2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">ADME verification (optional)</div>
+        <div class="step-title-sub">SwissADME · pkCSM</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>swissadme.ch</strong> and paste SMILES of your compounds (one per line)</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Run the analysis. Review the Lipinski, Ghose, Veber, Egan, and Muegge filters.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Record values for MW, LogP, HBD, HBA, TPSA. Include in Supplementary Table 1 of your paper.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">For confirmed compounds: report these values but do not use them as inclusion criteria.</span></li>
+      </ul>
+      <div class="callout callout-green">
+        <strong>Output:</strong> Supplementary Table 1 — ADME properties of all study compounds. This table is expected by reviewers even when ADME screening was not used as a selection criterion.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-a">swissadme.ch</span>
+        <span class="tool-badge tb-a">pkCSM online</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step A3 -->
+  <div class="step-block" id="sa3">
+    <div class="step-header-bar" onclick="toggleStep('sa3')">
+      <div class="step-num-badge" style="background:#34D399;">A3</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Retrieve SMILES strings &amp; 3D structures</div>
+        <div class="step-title-sub">PubChem · ChemSpider</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>pubchem.ncbi.nlm.nih.gov</strong>. Search each compound by name.</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">On each compound page, copy the <strong>Canonical SMILES</strong> string from the "Structures" section.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Download the <strong>3D SDF file</strong> (needed for molecular docking later). Save with compound name.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Record the <strong>CID number</strong> for each compound for citation in methods.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Build a master table: Compound name | CID | SMILES | MW | Formula.</span></li>
+      </ul>
+      <div class="callout callout-blue">
+        <strong>SMILES explained:</strong> A SMILES string is the chemical structure written as text characters (e.g. Curcumin: COc1cc(/C=C/C(=O)...)). It is the input format used by SwissTargetPrediction and PharmMapper. You do not need to understand the structure — just copy it accurately.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-a">pubchem.ncbi.nlm.nih.gov</span>
+        <span class="tool-badge tb-a">chemspider.com</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE B -->
+<section class="content-section ph-b" id="phB">
+  <div class="section-tag ph-b"><span class="tag-dot"></span> Phase B</div>
+  <div class="phase-header ph-b">
+    <div class="phase-badge ph-b" style="font-size:20px;">🎯</div>
+    <div class="phase-info">
+      <div class="phase-name">Molecular Target Prediction</div>
+      <div class="phase-when">When: always required · use minimum 2 tools for rigour</div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>Why multiple tools?</strong> Each tool uses a different algorithm. SwissTargetPrediction uses structural similarity; PharmMapper uses 3D pharmacophore mapping. A target missed by one tool may be found by the other. Take the <strong>union</strong> of results from all tools — any target predicted by at least one tool is included.
+  </div>
+
+  <div class="step-block" id="sb1">
+    <div class="step-header-bar" onclick="toggleStep('sb1')">
+      <div class="step-num-badge" style="background:#38BDF8;">B1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">SwissTargetPrediction — structure-based prediction</div>
+        <div class="step-title-sub">Best for: polyphenols, flavonoids, known natural product classes</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>swisstargetprediction.ch</strong></span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Paste SMILES of your first compound in the input box</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Set organism to <strong>Homo sapiens</strong> — critical, do not leave as default</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Click "Predict Targets" and wait 10–30 seconds for results</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Click <strong>Download</strong> to save results as CSV. Name file: <em>compoundname_SwissTP.csv</em></span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Repeat for all compounds. You will have one CSV per compound.</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Note the "Probability" column — this is your confidence score for each prediction.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Score</th><th>Interpretation</th><th>Use in analysis</th></tr></thead>
+        <tbody>
+          <tr><td><span class="code">≥ 0.1</span></td><td>High confidence prediction</td><td>✓ Include as computational prediction in results</td></tr>
+          <tr><td><span class="code">0.001–0.099</span></td><td>Low confidence</td><td>Include in network but do not emphasise in abstract</td></tr>
+          <tr><td><span class="code">0.000</span></td><td>Noise floor — not a real prediction</td><td>Do NOT report as computational prediction. Only include if wet lab confirms.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-red">
+        <strong>⚠ Critical limitation:</strong> SwissTargetPrediction performs poorly for structurally unusual compounds (diterpene lactones like Andrographolide, complex terpenoids). If your key compound returns mostly probability = 0.000, supplement with PharmMapper.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-b">swisstargetprediction.ch</span>
+        <span class="tool-badge tb-ref">Ref: Daina et al. 2019 · Gfeller et al. 2014</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sb2">
+    <div class="step-header-bar" onclick="toggleStep('sb2')">
+      <div class="step-num-badge" style="background:#38BDF8;">B2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">PharmMapper — pharmacophore-based prediction</div>
+        <div class="step-title-sub">Best for: structurally unusual compounds, terpenoids, alkaloids</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>pharmmapper.org</strong></span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Upload the 3D SDF file of your compound (downloaded from PubChem in Step A3)</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Set: Number of Reserved Matched Targets = <strong>300</strong>, Select Human Protein Targets only</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Submit. Processing takes 10–30 minutes. You will receive an email with a result link.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Download results. The key column is "Target Name" and "Fit Score".</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Keep all targets — PharmMapper does not use a probability score like SwissTP. Take the full list.</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">PharmMapper returns protein names (not gene symbols) — these need UniProt mapping (Step B3).</span></li>
+      </ul>
+      <div class="tools-row">
+        <span class="tool-badge tb-b">pharmmapper.org</span>
+        <span class="tool-badge tb-ref">Ref: Wang et al. 2017</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sb3">
+    <div class="step-header-bar" onclick="toggleStep('sb3')">
+      <div class="step-num-badge" style="background:#38BDF8;">B3</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Standardise gene names — UniProt ID Mapping</div>
+        <div class="step-title-sub">Critical: must be done before merging tools</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>uniprot.org/id-mapping</strong></span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Paste all protein names from PharmMapper output (one per line)</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Set "From" = Protein Name · Set "To" = UniProtKB · Set Organism = Homo sapiens</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Click Map. Download results in Excel format.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Use the <strong>Gene Names (primary)</strong> column as your standardised identifier going forward.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">For unmapped entries: search manually in UniProt or exclude if human protein cannot be confirmed.</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Note: SwissTargetPrediction already returns gene symbols — only PharmMapper output needs this step.</span></li>
+      </ul>
+      <div class="callout callout-blue">
+        <strong>Why this matters:</strong> TNF in SwissTargetPrediction = "Tumor necrosis factor" in PharmMapper = P01375 in UniProt. All the same protein. Without standardisation, your overlap analysis misses matches due to naming inconsistency.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-b">uniprot.org/id-mapping</span>
+        <span class="tool-badge tb-ref">Ref: UniProt Consortium 2023</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sb4">
+    <div class="step-header-bar" onclick="toggleStep('sb4')">
+      <div class="step-num-badge" style="background:#38BDF8;">B4</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Merge &amp; deduplicate compound target list</div>
+        <div class="step-title-sub">Union of all prediction tools → one master list</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Combine all CSV files from SwissTargetPrediction + standardised PharmMapper results into one spreadsheet</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Create columns: Gene Symbol | Compound 1 | Compound 2 | ... | Compound N | Count</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Fill in probability scores (or ✓/✗) for each compound-target pair</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Remove duplicate gene entries — each gene appears only once as a row</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Calculate "Count" column = number of compounds predicting that target. Higher count = stronger candidate.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">This is your <strong>Compound Target Master List</strong> — input for the Venn analysis in Phase D.</span></li>
+      </ul>
+      <div class="callout callout-green">
+        <strong>Output:</strong> Master compound target list (typically 300–600 unique gene symbols). Presented as Supplementary Table 2 in the paper.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE C -->
+<section class="content-section ph-c" id="phC">
+  <div class="section-tag ph-c"><span class="tag-dot"></span> Phase C</div>
+  <div class="phase-header ph-c">
+    <div class="phase-badge ph-c" style="font-size:20px;">🏥</div>
+    <div class="phase-info">
+      <div class="phase-name">Disease Target Collection</div>
+      <div class="phase-when">When: always required · use all 3 databases · apply score thresholds</div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>Common mistake to avoid:</strong> Do NOT use a "top 50" or "top 100" arbitrary gene count limit. This misses biologically relevant targets that rank lower due to less published literature rather than lower relevance. Always apply the published score threshold (GeneCards ≥ 20, DisGeNET ≥ 0.1) instead.
+  </div>
+
+  <div class="step-block" id="sc1">
+    <div class="step-header-bar" onclick="toggleStep('sc1')">
+      <div class="step-num-badge" style="background:#F59E0B;">C1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">GeneCards — disease gene collection</div>
+        <div class="step-title-sub">Use relevance score ≥ 20, not top-N cutoff</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>genecards.org</strong></span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Search your disease term (e.g. "type 2 diabetes mellitus", "wound healing", "diabetic wound")</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">On results page, look for the GeneCards Relevance Score column. Filter or sort by score ≥ 20.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Run multiple search terms for each disease to maximise coverage. Record results per search.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Download gene list (or manually copy gene symbols). Record the relevance score for each.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Genes appearing in multiple searches = higher confidence disease association. Mark these.</span></li>
+      </ul>
+      <div class="callout callout-blue">
+        <strong>Recommended search terms per disease:</strong><br>
+        T2DM: "type 2 diabetes mellitus" · "insulin resistance" · "hyperglycaemia" · "diabetes mellitus type 2"<br>
+        Wound healing: "wound healing" · "diabetic wound" · "chronic wound" · "wound repair"
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-c">genecards.org</span>
+        <span class="tool-badge tb-ref">Ref: Stelzer et al. 2016</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sc2">
+    <div class="step-header-bar" onclick="toggleStep('sc2')">
+      <div class="step-num-badge" style="background:#F59E0B;">C2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">DisGeNET — gene-disease association database</div>
+        <div class="step-title-sub">Use GDA score ≥ 0.1 for high confidence associations</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>disgenet.org</strong> and click "Diseases" in the search bar</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Search your disease by name or UMLS ID (T2DM: C0011860 · Wound healing: C0043240)</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Click the disease to open its gene association list</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Filter by <strong>Score GDA ≥ 0.1</strong>. This is the published minimum threshold for high-confidence associations.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Download the gene list. The key columns are Gene Symbol and Score GDA.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Genes with Score GDA ≥ 0.5 are especially strong — note these as high-confidence disease genes.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>GDA Score</th><th>Evidence level</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="code">0.9–1.0</span></td><td>Very strong</td><td>Multiple curated databases + many publications + animal models</td></tr>
+          <tr><td><span class="code">0.5–0.9</span></td><td>Strong</td><td>Curated sources + good publication support</td></tr>
+          <tr><td><span class="code">0.1–0.5</span></td><td>Moderate</td><td>Some evidence — acceptable for network pharmacology</td></tr>
+          <tr><td><span class="code">&lt; 0.1</span></td><td>Weak</td><td>Insufficient evidence — exclude</td></tr>
+        </tbody>
+      </table>
+      <div class="tools-row">
+        <span class="tool-badge tb-c">disgenet.org</span>
+        <span class="tool-badge tb-ref">Ref: Piñero et al. 2020</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sc3">
+    <div class="step-header-bar" onclick="toggleStep('sc3')">
+      <div class="step-num-badge" style="background:#F59E0B;">C3</div>
+      <div class="step-title-group">
+        <div class="step-title-main">OMIM — confirmed Mendelian disease genes</div>
+        <div class="step-title-sub">High-confidence anchor genes — include all results</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>omim.org</strong> and search your disease</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Click the disease entry. Scroll to "Gene-Phenotype Relationships" section.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Record all genes listed. OMIM only contains confirmed causal gene-disease relationships — no score filter needed.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">These genes serve as high-confidence anchors in your disease gene set.</span></li>
+      </ul>
+      <div class="tools-row">
+        <span class="tool-badge tb-c">omim.org</span>
+        <span class="tool-badge tb-ref">Ref: Amberger et al. 2019</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sc4">
+    <div class="step-header-bar" onclick="toggleStep('sc4')">
+      <div class="step-num-badge" style="background:#F59E0B;">C4</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Merge all disease gene lists</div>
+        <div class="step-title-sub">Union of GeneCards + DisGeNET + OMIM → master disease gene set</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Combine gene lists from GeneCards, DisGeNET, and OMIM into one spreadsheet</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Add a source column indicating which database(s) each gene came from</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Remove duplicates — each gene appears only once</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Genes from multiple databases = higher confidence. Add a "database count" column.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">This is your <strong>Master Disease Gene Set</strong> — input for the Venn analysis.</span></li>
+      </ul>
+      <div class="callout callout-green">
+        <strong>Output:</strong> Master disease gene set (typically 200–800 genes for a well-characterised disease). Report total gene count per database in your methods section.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE D -->
+<section class="content-section ph-d" id="phD">
+  <div class="section-tag ph-d"><span class="tag-dot"></span> Phase D</div>
+  <div class="phase-header ph-d">
+    <div class="phase-badge ph-d" style="font-size:20px;">⭕</div>
+    <div class="phase-info">
+      <div class="phase-name">Venn Overlap Analysis — Candidate Target Identification</div>
+      <div class="phase-when">When: always required · this is the scientific core of the study</div>
+    </div>
+  </div>
+
+  <div class="step-block open" id="sd1">
+    <div class="step-header-bar" onclick="toggleStep('sd1')">
+      <div class="step-num-badge" style="background:#2DD4BF;">D1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Venn intersection: compound targets ∩ disease genes</div>
+        <div class="step-title-sub">Genes in BOTH lists = candidate therapeutic targets</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Take your <strong>Compound Target Master List</strong> (Phase B output) and <strong>Disease Gene Set</strong> (Phase C output)</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Find genes that appear in BOTH lists. This intersection = your <strong>candidate therapeutic targets</strong>.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Use <strong>jvenn.fr</strong> or <strong>Venny 2.1</strong> online to generate a Venn diagram automatically</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">For Python users: use the <code>set.intersection()</code> method or pandas merge</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Record: total compound targets | total disease genes | overlap count | Venn diagram</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">The Venn diagram becomes <strong>Figure 1</strong> of your paper</span></li>
+      </ul>
+      <div class="callout callout-navy">
+        <strong>Typical overlap rates:</strong> For a well-characterised disease, expect 5–15% overlap between compound targets and disease genes. Too low = your compounds may not be disease-relevant. Too high = your disease gene set may be too broad.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-d">jvenn.fr</span>
+        <span class="tool-badge tb-d">Venny 2.1 online</span>
+        <span class="tool-badge tb-d">Python / R</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sd2">
+    <div class="step-header-bar" onclick="toggleStep('sd2')">
+      <div class="step-num-badge" style="background:#2DD4BF;">D2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Build candidate target tally table</div>
+        <div class="step-title-sub">Multi-compound targets are your strongest candidates</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Create a table: rows = overlapping genes, columns = each compound</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Fill in probability scores (or ✓/✗) for each compound-target pair</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Add a "compound count" column. Targets predicted by more compounds = prioritise for hub analysis and docking.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Add a "wet lab confirmed" column — mark any target already confirmed by existing experimental data</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Sort by compound count descending. Top 20 targets = your primary candidates for Phase E.</span></li>
+      </ul>
+      <div class="callout callout-green">
+        <strong>Output:</strong> Candidate target tally table (typically 20–100 genes). This becomes Supplementary Table 3. The top section of this table drives the Discussion narrative.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE E -->
+<section class="content-section ph-e" id="phE">
+  <div class="section-tag ph-e"><span class="tag-dot"></span> Phase E</div>
+  <div class="phase-header ph-e">
+    <div class="phase-badge ph-e" style="font-size:20px;">🕸</div>
+    <div class="phase-info">
+      <div class="phase-name">PPI Network Construction &amp; Hub Target Identification</div>
+      <div class="phase-when">When: required for journal paper · not needed for conference abstract only</div>
+    </div>
+  </div>
+
+  <div class="step-block" id="se1">
+    <div class="step-header-bar" onclick="toggleStep('se1')">
+      <div class="step-num-badge" style="background:#34D399;">E1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Build PPI network in STRING</div>
+        <div class="step-title-sub">Maps how candidate targets interact with each other</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>string-db.org</strong> → click "Multiple Proteins" search</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Paste your overlapping gene list (from Phase D). Set organism = Homo sapiens.</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Set <strong>Confidence score ≥ 0.7</strong> (high confidence). This removes weak/speculative interactions.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Click "Continue". View the resulting network on screen.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Go to Exports → Download the <strong>TSV network file</strong> for Cytoscape import.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Also download the "Node attributes" file — contains degree scores pre-calculated by STRING.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Confidence setting</th><th>Score</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td>High confidence</td><td><span class="code">≥ 0.7</span></td><td>Standard for NP papers — recommended</td></tr>
+          <tr><td>Medium confidence</td><td><span class="code">≥ 0.4</span></td><td>For small gene sets where high confidence produces too sparse a network</td></tr>
+          <tr><td>Highest confidence</td><td><span class="code">≥ 0.9</span></td><td>Only for very well-studied diseases with extensive interaction data</td></tr>
+        </tbody>
+      </table>
+      <div class="tools-row">
+        <span class="tool-badge tb-e">string-db.org</span>
+        <span class="tool-badge tb-ref">Ref: Szklarczyk et al. 2023</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="se2">
+    <div class="step-header-bar" onclick="toggleStep('se2')">
+      <div class="step-num-badge" style="background:#34D399;">E2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Hub target identification in Cytoscape</div>
+        <div class="step-title-sub">CytoHubba plugin · degree centrality</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Open <strong>Cytoscape</strong> (free desktop software, cytoscape.org). Install <strong>CytoHubba</strong> plugin via Apps menu.</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Import STRING network: File → Import → Network from File → select your TSV file</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">In Apps → CytoHubba → select <strong>Degree</strong> method → Submit</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">CytoHubba ranks all nodes by degree. <strong>Top 10 nodes = hub targets</strong> — your molecular docking candidates.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">For additional topological validation, also run: Betweenness Centrality (BC) and Closeness Centrality (CC) via CytoNCA plugin.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Hub targets = nodes with high Degree + high BC + high CC. Export this ranked list.</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Style the network: node size proportional to degree, edge thickness proportional to confidence. Export as Figure 2.</span></li>
+      </ul>
+      <div class="callout callout-blue">
+        <strong>What is a hub target?</strong> A protein that connects to many others in the network. In biology, hub proteins are regulatory nodes — targeting them produces broad downstream effects. In NP papers, hub targets are reported as the primary therapeutic targets of the formulation.
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-e">Cytoscape</span>
+        <span class="tool-badge tb-e">CytoHubba plugin</span>
+        <span class="tool-badge tb-e">CytoNCA plugin</span>
+        <span class="tool-badge tb-ref">Ref: Shannon et al. 2003</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="se3">
+    <div class="step-header-bar" onclick="toggleStep('se3')">
+      <div class="step-num-badge" style="background:#34D399;">E3</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Herb-Compound-Target (H-C-T) network</div>
+        <div class="step-title-sub">Visualises polypharmacology — standard Figure 2 in NP papers</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Build a network in Cytoscape with three node types: Herb → Compound → Target (from your tally table)</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Edge = relationship (herb contains compound; compound predicts target)</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Calculate degree centrality. Nodes with high degree = key compounds or targets with broad connections.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Style: different shapes for herbs/compounds/targets. Node size = degree. Export as Figure 2.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">This figure visually demonstrates polypharmacology — the same target being hit by multiple compounds from different herbs.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE F -->
+<section class="content-section ph-f" id="phF">
+  <div class="section-tag ph-f"><span class="tag-dot"></span> Phase F</div>
+  <div class="phase-header ph-f">
+    <div class="phase-badge ph-f" style="font-size:20px;">📊</div>
+    <div class="phase-info">
+      <div class="phase-name">GO &amp; KEGG Pathway Enrichment Analysis</div>
+      <div class="phase-when">When: required for journal paper · DAVID is the tool; GO and KEGG are the analyses</div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sf1">
+    <div class="step-header-bar" onclick="toggleStep('sf1')">
+      <div class="step-num-badge" style="background:#F59E0B;">F1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">GO &amp; KEGG enrichment via DAVID</div>
+        <div class="step-title-sub">DAVID is the platform; GO and KEGG are the two analyses you run within it</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>david.ncifcrf.gov</strong> → click "Start Analysis"</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Paste your hub target gene list (from Phase E) in the Gene List input box</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Select Identifier = <strong>OFFICIAL_GENE_SYMBOL</strong>, List Type = Gene List</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Set Species = Homo sapiens. Click Submit List.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">In the left panel, under <strong>Gene Ontology</strong>, select: GOTERM_BP_DIRECT (Biological Process)</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Under <strong>Pathways</strong>, select: KEGG_PATHWAY</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Click Functional Annotation Chart. Download results.</span></li>
+        <li><span class="prot-num">8</span><span class="prot-text">Filter results: keep only terms with <strong>p &lt; 0.05 (Benjamini corrected)</strong> and gene count ≥ 2</span></li>
+        <li><span class="prot-num">9</span><span class="prot-text">Visualise as a bubble chart (x = gene ratio, y = pathway name, bubble size = gene count, colour = p-value). This is Figure 3.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Analysis type</th><th>What it tells you</th><th>Significance threshold</th></tr></thead>
+        <tbody>
+          <tr><td>GO Biological Process</td><td>What biological processes your targets are involved in</td><td><span class="code">p &lt; 0.05</span> BH corrected</td></tr>
+          <tr><td>GO Molecular Function</td><td>What biochemical activities your targets perform</td><td><span class="code">p &lt; 0.05</span> BH corrected</td></tr>
+          <tr><td>GO Cellular Component</td><td>Where in the cell your targets are located</td><td><span class="code">p &lt; 0.05</span> BH corrected</td></tr>
+          <tr><td>KEGG Pathway</td><td>Which named signalling pathways are enriched</td><td><span class="code">p &lt; 0.05</span> BH corrected, gene ≥ 2</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-amber">
+        <strong>KEGG pathways to look for in T2DM/wound healing studies:</strong> PI3K-AKT · AGE-RAGE · TNF signalling · TGF-β · NF-κB · MAPK · HIF-1 · VEGF · PPAR · Insulin resistance · ECM-receptor interaction
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-f">david.ncifcrf.gov</span>
+        <span class="tool-badge tb-f">Metascape (alternative)</span>
+        <span class="tool-badge tb-f">clusterProfiler (R)</span>
+        <span class="tool-badge tb-ref">Ref: Huang et al. 2009</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE G -->
+<section class="content-section ph-g" id="phG">
+  <div class="section-tag ph-g"><span class="tag-dot"></span> Phase G</div>
+  <div class="phase-header ph-g">
+    <div class="phase-badge ph-g" style="font-size:20px;">🔬</div>
+    <div class="phase-info">
+      <div class="phase-name">Molecular Docking</div>
+      <div class="phase-when">When: required for journal paper · the structural validation layer</div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sg1">
+    <div class="step-header-bar" onclick="toggleStep('sg1')">
+      <div class="step-num-badge" style="background:#F87171;">G1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Protein (receptor) preparation</div>
+        <div class="step-title-sub">Download PDB structure → clean → prepare for docking</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Go to <strong>rcsb.org</strong>. Search for your hub target protein (e.g. "MMP1 Homo sapiens"). Select a high-resolution crystal structure (&lt; 2.5 Å preferred).</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Download the PDB file. Note the PDB ID for methods citation (e.g. 1SU3).</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Open in <strong>AutoDockTools</strong> or <strong>PyMOL</strong>. Remove water molecules (HOH), co-crystallised ligands, and non-standard residues.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Add polar hydrogen atoms. Assign Gasteiger partial charges.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Define the <strong>binding pocket</strong> (grid box) centred on the co-crystallised ligand position or known active site residues.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Save as PDBQT format for AutoDock Vina input.</span></li>
+      </ul>
+      <div class="tools-row">
+        <span class="tool-badge tb-g">rcsb.org</span>
+        <span class="tool-badge tb-g">AutoDockTools</span>
+        <span class="tool-badge tb-g">PyMOL</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sg2">
+    <div class="step-header-bar" onclick="toggleStep('sg2')">
+      <div class="step-num-badge" style="background:#F87171;">G2</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Ligand (compound) preparation</div>
+        <div class="step-title-sub">Energy minimise 3D structure → convert to docking format</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Retrieve 3D SDF file from PubChem (downloaded in Step A3) for each marker compound</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Energy minimise using <strong>Avogadro</strong> (free) or Open Babel: force field MMFF94, 500 steps</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Add hydrogens. Assign Gasteiger charges.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Convert to PDBQT format using Open Babel or AutoDockTools</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text"><strong>Always include reference/control drugs</strong> — dock the same approved drug that you compare against in wet lab. This allows direct computational-experimental comparison.</span></li>
+      </ul>
+      <div class="tools-row">
+        <span class="tool-badge tb-g">Avogadro</span>
+        <span class="tool-badge tb-g">Open Babel</span>
+        <span class="tool-badge tb-g">AutoDockTools</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sg3">
+    <div class="step-header-bar" onclick="toggleStep('sg3')">
+      <div class="step-num-badge" style="background:#F87171;">G3</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Run molecular docking — AutoDock Vina</div>
+        <div class="step-title-sub">Calculate binding affinity for each compound-target pair</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Open <strong>PyRx</strong> (GUI wrapper for AutoDock Vina — easier for beginners). Import protein and ligand files.</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Set grid box dimensions centred on binding pocket (typically 20×20×20 Å for drug-like molecules)</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Set exhaustiveness = 8 (standard). Higher = more accurate but slower.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Run docking. Record the <strong>lowest binding energy</strong> (most negative kcal/mol) for each compound-target pair.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Build a results table: rows = targets, columns = each compound + reference drug. Report binding energy in kcal/mol.</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Validate: re-dock the co-crystallised ligand and confirm RMSD &lt; 2.0 Å — this confirms your protocol is accurate.</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Binding energy</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="code">≤ −7.0 kcal/mol</span></td><td>Strong binding — excellent candidate. Better than or comparable to many reference drugs.</td></tr>
+          <tr><td><span class="code">−5.0 to −7.0</span></td><td>Moderate binding — acceptable. Report and discuss.</td></tr>
+          <tr><td><span class="code">≥ −5.0 kcal/mol</span></td><td>Weak binding — report but de-emphasise. May still be relevant in combination.</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-amber">
+        <strong>Key comparison:</strong> If your compound's binding energy is more negative than the reference drug against the same target, that is a strong result. If wet lab IC₅₀ also shows your compound is more potent than the reference drug — that is a three-way convergence (wet lab + computational structure + binding energy).
+      </div>
+      <div class="tools-row">
+        <span class="tool-badge tb-g">AutoDock Vina</span>
+        <span class="tool-badge tb-g">PyRx (GUI)</span>
+        <span class="tool-badge tb-ref">Ref: Trott &amp; Olson 2010</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-block" id="sg4">
+    <div class="step-header-bar" onclick="toggleStep('sg4')">
+      <div class="step-num-badge" style="background:#F87171;">G4</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Visualise binding interactions</div>
+        <div class="step-title-sub">PyMOL / Discovery Studio → binding pose + interaction map</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Open docking output in <strong>PyMOL</strong> or <strong>Discovery Studio Visualizer</strong> (both free)</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Identify hydrogen bonds, hydrophobic contacts, and key amino acid residues interacting with the compound</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Generate 2D interaction diagrams in Discovery Studio (Analyze → Ligand Interactions)</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Compare binding pose of your compound against the reference drug at the same target</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Export publication-quality images for Figure 4. Include both 3D pose and 2D interaction map.</span></li>
+      </ul>
+      <div class="tools-row">
+        <span class="tool-badge tb-g">PyMOL</span>
+        <span class="tool-badge tb-g">Discovery Studio Visualizer</span>
+        <span class="tool-badge tb-g">UCSF Chimera</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE H -->
+<section class="content-section ph-h" id="phH">
+  <div class="section-tag ph-h"><span class="tag-dot"></span> Phase H — Optional</div>
+  <div class="phase-header ph-h">
+    <div class="phase-badge ph-h" style="font-size:20px;">⚡</div>
+    <div class="phase-info">
+      <div class="phase-name">Molecular Dynamics (MD) Simulation</div>
+      <div class="phase-when">When: optional but recommended for Q1 journals · top 2 docking hits only</div>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>The Q1 differentiator:</strong> MD simulation confirms that your docking results are stable over time, not just a snapshot binding pose. Reviewers at Phytomedicine, Journal of Ethnopharmacology, and Biomedicine & Pharmacotherapy increasingly expect this. Run only for your top 1–2 compound-target pairs. A 100 ns GROMACS simulation takes approximately 12–48 hours on a standard workstation.
+  </div>
+
+  <div class="step-block" id="sh1">
+    <div class="step-header-bar" onclick="toggleStep('sh1')">
+      <div class="step-num-badge" style="background:#A78BFA;">H1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">MD simulation protocol — GROMACS</div>
+        <div class="step-title-sub">100 ns · CHARMM36 force field · RMSD + RMSF + MM-GBSA</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">Select top 2 compound-target pairs from docking (most negative binding energy + wet lab confirmation)</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Prepare the protein-ligand complex from your docking output in GROMACS format</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Solvate in TIP3P water box, add Na⁺/Cl⁻ ions to neutralise</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">Energy minimise → NVT equilibration (300 K, 100 ps) → NPT equilibration (1 bar, 100 ps) → Production MD (100 ns)</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">Analyse: <strong>RMSD</strong> (structural stability over time), <strong>RMSF</strong> (residue flexibility), <strong>H-bond count</strong> (interaction stability)</span></li>
+        <li><span class="prot-num">6</span><span class="prot-text">Calculate <strong>MM-GBSA binding free energy</strong> — more accurate than docking score alone</span></li>
+        <li><span class="prot-num">7</span><span class="prot-text">Stable RMSD (&lt; 2 Å fluctuation) + maintained H-bonds + negative MM-GBSA = confirmed stable binding</span></li>
+      </ul>
+      <table class="thresh-table">
+        <thead><tr><th>Analysis</th><th>Acceptable result</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td>RMSD</td><td><span class="code">&lt; 2.0 Å</span> plateau</td><td>System is stable — complex does not fall apart over 100 ns</td></tr>
+          <tr><td>RMSF</td><td>Low at active site residues</td><td>Binding pocket is rigid — compound is well-anchored</td></tr>
+          <tr><td>MM-GBSA</td><td><span class="code">&lt; −30 kcal/mol</span></td><td>Favourable and stable binding free energy</td></tr>
+        </tbody>
+      </table>
+      <div class="tools-row">
+        <span class="tool-badge tb-h">GROMACS</span>
+        <span class="tool-badge tb-h">AMBER (alternative)</span>
+        <span class="tool-badge tb-h">CHARMM36 force field</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASE I -->
+<section class="content-section ph-i" id="phI">
+  <div class="section-tag ph-i"><span class="tag-dot"></span> Phase I</div>
+  <div class="phase-header ph-i">
+    <div class="phase-badge ph-i" style="font-size:20px;">✅</div>
+    <div class="phase-info">
+      <div class="phase-name">Wet Lab Validation &amp; Concordance Integration</div>
+      <div class="phase-when">When: whenever existing bioactivity data is available · the paper's strongest differentiator</div>
+    </div>
+  </div>
+
+  <div class="callout callout-navy">
+    <strong>Why this phase is your competitive advantage:</strong> Most published NP studies are purely computational with no experimental validation beyond docking. Any existing wet lab data — IC₅₀ values, protein expression, cell assays, in vivo results — that aligns with your NP predictions transforms the paper from hypothesis-generating to hypothesis-confirming. This is the difference between a Q2 and Q1 acceptance.
+  </div>
+
+  <div class="step-block open" id="si1">
+    <div class="step-header-bar" onclick="toggleStep('si1')">
+      <div class="step-num-badge" style="background:#34D399;">I1</div>
+      <div class="step-title-group">
+        <div class="step-title-main">Build the wet lab concordance table</div>
+        <div class="step-title-sub">The centrepiece of the Discussion section</div>
+      </div>
+      <span class="step-chevron">▼</span>
+    </div>
+    <div class="step-body">
+      <ul class="protocol-list">
+        <li><span class="prot-num">1</span><span class="prot-text">For each computationally predicted target, check whether existing bioactivity data confirms activity at that target or along that pathway</span></li>
+        <li><span class="prot-num">2</span><span class="prot-text">Build a table with columns: Target | Wet lab evidence | Experimental value | Compound(s) driving it (computational) | Predicted target (computational) | Agreement</span></li>
+        <li><span class="prot-num">3</span><span class="prot-text">Each row where computational prediction + wet lab agree = a concordant hit. Report the total count prominently.</span></li>
+        <li><span class="prot-num">4</span><span class="prot-text">For targets with wet lab data but no computational prediction: report as orthogonal evidence. Discuss as a limitation of the prediction algorithm.</span></li>
+        <li><span class="prot-num">5</span><span class="prot-text">This table becomes Table 4 of the paper (or Figure 5 if presented as a graphical concordance map)</span></li>
+      </ul>
+      <div class="callout callout-green">
+        <strong>The perfect concordance statement reads:</strong> "Network pharmacology predicted X, Y, Z as hub targets. This is independently corroborated by measured IC₅₀ of A µg/mL against target X, upregulation of Y protein expression by B%, and inhibition of Z by C% — establishing a two-independent-method confirmation for each key mechanism."
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK REFERENCE CARD -->
+<section class="content-section" id="quickref" style="background:white;">
+  <div class="section-tag" style="color:#0A1628;">
+    <span class="tag-dot" style="background:#2DD4BF;"></span> Quick Reference
+  </div>
+  <h2 class="section-title">Quick Reference Card</h2>
+  <p class="section-desc" style="margin-bottom:16px;">All thresholds and decision rules at a glance. Bookmark this section.</p>
+
+  <div class="qr-grid">
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#065F46;">🌿 Phase A — Compounds</div>
+      <div class="qr-row"><span class="qr-label">TCMSP OB filter</span><span class="qr-val">≥ 30%</span></div>
+      <div class="qr-row"><span class="qr-label">TCMSP DL filter</span><span class="qr-val">≥ 0.18</span></div>
+      <div class="qr-row"><span class="qr-label">Lipinski MW</span><span class="qr-val">≤ 500 Da</span></div>
+      <div class="qr-row"><span class="qr-label">Skip if</span><span class="qr-val">confirmed markers</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#0C4A6E;">🎯 Phase B — Targets</div>
+      <div class="qr-row"><span class="qr-label">SwissTP min prob</span><span class="qr-val">≥ 0.1</span></div>
+      <div class="qr-row"><span class="qr-label">prob = 0.000</span><span class="qr-val">not a prediction</span></div>
+      <div class="qr-row"><span class="qr-label">Tools minimum</span><span class="qr-val">2 tools</span></div>
+      <div class="qr-row"><span class="qr-label">Merge strategy</span><span class="qr-val">union of all</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#78350F;">🏥 Phase C — Disease</div>
+      <div class="qr-row"><span class="qr-label">GeneCards score</span><span class="qr-val">≥ 20</span></div>
+      <div class="qr-row"><span class="qr-label">DisGeNET GDA</span><span class="qr-val">≥ 0.1</span></div>
+      <div class="qr-row"><span class="qr-label">OMIM</span><span class="qr-val">all entries</span></div>
+      <div class="qr-row"><span class="qr-label">No top-N limit</span><span class="qr-val">use score filter</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#134E4A;">🕸 Phase E — Network</div>
+      <div class="qr-row"><span class="qr-label">STRING confidence</span><span class="qr-val">≥ 0.7</span></div>
+      <div class="qr-row"><span class="qr-label">Hub targets</span><span class="qr-val">top 10 degree</span></div>
+      <div class="qr-row"><span class="qr-label">Centrality metrics</span><span class="qr-val">DC + BC + CC</span></div>
+      <div class="qr-row"><span class="qr-label">Tool</span><span class="qr-val">CytoHubba</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#78350F;">📊 Phase F — Enrichment</div>
+      <div class="qr-row"><span class="qr-label">Platform</span><span class="qr-val">DAVID</span></div>
+      <div class="qr-row"><span class="qr-label">Analyses</span><span class="qr-val">GO + KEGG</span></div>
+      <div class="qr-row"><span class="qr-label">p-value</span><span class="qr-val">&lt; 0.05 BH</span></div>
+      <div class="qr-row"><span class="qr-label">Min gene count</span><span class="qr-val">≥ 2 per term</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#7F1D1D;">🔬 Phase G — Docking</div>
+      <div class="qr-row"><span class="qr-label">Acceptable binding</span><span class="qr-val">≤ −5.0 kcal/mol</span></div>
+      <div class="qr-row"><span class="qr-label">Strong binding</span><span class="qr-val">≤ −7.0 kcal/mol</span></div>
+      <div class="qr-row"><span class="qr-label">Validation RMSD</span><span class="qr-val">&lt; 2.0 Å</span></div>
+      <div class="qr-row"><span class="qr-label">Tool</span><span class="qr-val">AutoDock Vina</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#4C1D95;">⚡ Phase H — MD</div>
+      <div class="qr-row"><span class="qr-label">Duration</span><span class="qr-val">100 ns</span></div>
+      <div class="qr-row"><span class="qr-label">RMSD stable</span><span class="qr-val">&lt; 2.0 Å</span></div>
+      <div class="qr-row"><span class="qr-label">MM-GBSA strong</span><span class="qr-val">&lt; −30 kcal/mol</span></div>
+      <div class="qr-row"><span class="qr-label">Select only</span><span class="qr-val">top 2 hits</span></div>
+    </div>
+
+    <div class="qr-cell">
+      <div class="qr-cell-title" style="color:#065F46;">📄 Paper Figures</div>
+      <div class="qr-row"><span class="qr-label">Figure 1</span><span class="qr-val">Venn diagram</span></div>
+      <div class="qr-row"><span class="qr-label">Figure 2</span><span class="qr-val">H-C-T network</span></div>
+      <div class="qr-row"><span class="qr-label">Figure 3</span><span class="qr-val">KEGG bubble chart</span></div>
+      <div class="qr-row"><span class="qr-label">Figure 4</span><span class="qr-val">Docking pose</span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CITATIONS -->
+<section class="content-section" id="refs">
+  <div class="section-tag" style="color:#334155;">
+    <span class="tag-dot" style="background:#94A3B8;"></span> References
+  </div>
+  <h2 class="section-title">Essential Citations</h2>
+  <p class="section-desc" style="margin-bottom:16px;">These are the core references to cite in every network pharmacology methods section.</p>
+
+  <div class="ref-item"><span class="ref-num">[1]</span> Ru J, Li P, Wang J, et al. TCMSP: a database of systems pharmacology for drug discovery from herbal medicines. <em>J Cheminform.</em> 2014;6:13. <span class="ref-doi">DOI: 10.1186/1758-2946-6-13</span></div>
+  <div class="ref-item"><span class="ref-num">[2]</span> Lipinski CA, et al. Experimental and computational approaches to estimate solubility and permeability in drug discovery. <em>Adv Drug Deliv Rev.</em> 2001;46(1-3):3-26. <span class="ref-doi">DOI: 10.1016/S0169-409X(00)00129-0</span></div>
+  <div class="ref-item"><span class="ref-num">[3]</span> Daina A, Michielin O, Zoete V. SwissTargetPrediction: updated data and new features for efficient prediction of protein targets of small molecules. <em>Nucleic Acids Res.</em> 2019;47(W1):W357-W364. <span class="ref-doi">DOI: 10.1093/nar/gkz382</span></div>
+  <div class="ref-item"><span class="ref-num">[4]</span> Gfeller D, et al. SwissTargetPrediction: a web server for target prediction of bioactive small molecules. <em>Nucleic Acids Res.</em> 2014;42:W32-8. <span class="ref-doi">DOI: 10.1093/nar/gku293</span></div>
+  <div class="ref-item"><span class="ref-num">[5]</span> Wang X, et al. PharmMapper 2017 update: a web server for potential drug target identification using pharmacophore mapping. <em>Nucleic Acids Res.</em> 2017;45(W1):W356-W360. <span class="ref-doi">DOI: 10.1093/nar/gkx374</span></div>
+  <div class="ref-item"><span class="ref-num">[6]</span> UniProt Consortium. UniProt: the Universal Protein Knowledgebase in 2023. <em>Nucleic Acids Res.</em> 2023;51(D1):D523-D531. <span class="ref-doi">DOI: 10.1093/nar/gkac1052</span></div>
+  <div class="ref-item"><span class="ref-num">[7]</span> Stelzer G, et al. The GeneCards Suite: From Gene Data Mining to Disease Genome Sequence Analyses. <em>Curr Protoc Bioinformatics.</em> 2016;54:1.30.1-1.30.33. <span class="ref-doi">DOI: 10.1002/cpbi.5</span></div>
+  <div class="ref-item"><span class="ref-num">[8]</span> Piñero J, et al. The DisGeNET knowledge platform for disease genomics: 2019 update. <em>Nucleic Acids Res.</em> 2020;48(D1):D845-D855. <span class="ref-doi">DOI: 10.1093/nar/gkz1021</span></div>
+  <div class="ref-item"><span class="ref-num">[9]</span> Amberger JS, et al. OMIM.org: leveraging knowledge across phenotype-gene relationships. <em>Nucleic Acids Res.</em> 2019;47(D1):D1038-D1043. <span class="ref-doi">DOI: 10.1093/nar/gky1151</span></div>
+  <div class="ref-item"><span class="ref-num">[10]</span> Szklarczyk D, et al. The STRING database in 2023. <em>Nucleic Acids Res.</em> 2023;51(D1):D638-D646. <span class="ref-doi">DOI: 10.1093/nar/gkac1000</span></div>
+  <div class="ref-item"><span class="ref-num">[11]</span> Shannon P, et al. Cytoscape: a software environment for integrated models of biomolecular interaction networks. <em>Genome Res.</em> 2003;13(11):2498-2504. <span class="ref-doi">DOI: 10.1101/gr.1239303</span></div>
+  <div class="ref-item"><span class="ref-num">[12]</span> Huang DW, Sherman BT, Lempicki RA. Systematic and integrative analysis of large gene lists using DAVID bioinformatics resources. <em>Nat Protoc.</em> 2009;4(1):44-57. <span class="ref-doi">DOI: 10.1038/nprot.2008.211</span></div>
+  <div class="ref-item"><span class="ref-num">[13]</span> Trott O, Olson AJ. AutoDock Vina: improving the speed and accuracy of docking. <em>J Comput Chem.</em> 2010;31(2):455-461. <span class="ref-doi">DOI: 10.1002/jcc.21334</span></div>
+</section>
+
+</main><!-- end main -->
+
+<script>
+function toggleStep(id) {
+  const block = document.getElementById(id);
+  block.classList.toggle('open');
+}
+function setActive(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  if(window.innerWidth <= 768) toggleSidebar();
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+}
+// Open all steps in current section by default
+document.querySelectorAll('.step-block').forEach((b, i) => {
+  if(i < 3) b.classList.add('open');
+});
+// Highlight active nav on scroll
+window.addEventListener('scroll', () => {
+  const sections = document.querySelectorAll('section[id], div[id]');
+  let current = '';
+  sections.forEach(s => {
+    if(window.scrollY >= s.offsetTop - 80) current = s.id;
+  });
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.remove('active');
+    if(n.getAttribute('href') === '#' + current) n.classList.add('active');
+  });
+});
+</script>
+
+<script>
+// ── PWA Service Worker Registration ───────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        console.log('[PWA] Service Worker registered:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              showUpdateBanner();
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+
+// ── Install Prompt ─────────────────────────────────────────────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  const existing = document.getElementById('install-banner');
+  if (existing) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'install-banner';
+  banner.style.cssText = `
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #0A1628; color: white; border: 1px solid #2DD4BF;
+    border-radius: 14px; padding: 14px 20px;
+    display: flex; align-items: center; gap: 14px;
+    z-index: 9999; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    max-width: 360px; width: calc(100% - 40px);
+    font-family: 'DM Sans', sans-serif;
+    animation: slideUp 0.3s ease;
+  `;
+  banner.innerHTML = `
+    <div style="font-size:28px;">📲</div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:600;margin-bottom:3px;">Install NP Framework</div>
+      <div style="font-size:11px;opacity:0.65;">Add to home screen for offline access</div>
+    </div>
+    <button onclick="installApp()" style="
+      background:#2DD4BF; color:#0A1628; border:none; border-radius:8px;
+      padding:7px 14px; font-size:12px; font-weight:700; cursor:pointer;
+      font-family:inherit;
+    ">Install</button>
+    <button onclick="document.getElementById('install-banner').remove()" style="
+      background:none; border:none; color:rgba(255,255,255,0.4);
+      cursor:pointer; font-size:18px; padding:0 4px; line-height:1;
+    ">×</button>
+  `;
+  document.body.appendChild(banner);
+}
+
+async function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  console.log('[PWA] Install outcome:', outcome);
+  deferredPrompt = null;
+  document.getElementById('install-banner')?.remove();
+}
+
+function showUpdateBanner() {
+  const banner = document.createElement('div');
+  banner.style.cssText = `
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: #1B4332; color: white; border: 1px solid #2DD4BF;
+    border-radius: 12px; padding: 12px 18px;
+    display: flex; align-items: center; gap: 12px;
+    z-index: 9999; font-family: 'DM Sans', sans-serif;
+    font-size: 12px; max-width: 340px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  `;
+  banner.innerHTML = `
+    <span>🔄 Update available</span>
+    <button onclick="window.location.reload()" style="
+      background:#2DD4BF;color:#0A1628;border:none;border-radius:6px;
+      padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;
+      font-family:inherit;
+    ">Reload</button>
+  `;
+  document.body.appendChild(banner);
+}
+
+window.addEventListener('appinstalled', () => {
+  console.log('[PWA] App installed successfully');
+  document.getElementById('install-banner')?.remove();
+});
+
+// ── Offline/Online status indicator ───────────────────────────────────────────
+function updateOnlineStatus() {
+  const indicator = document.getElementById('online-status');
+  if (!indicator) return;
+  if (navigator.onLine) {
+    indicator.style.display = 'none';
+  } else {
+    indicator.style.display = 'flex';
+  }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+</script>
+
+<style>
+#offline-indicator {
+  position: fixed; bottom: 20px; right: 20px;
+  background: #1E293B; color: #F59E0B;
+  border: 1px solid #F59E0B;
+  border-radius: 10px; padding: 8px 14px;
+  font-size: 11px; font-weight: 600;
+  display: none; align-items: center; gap: 6px;
+  z-index: 9998; font-family: 'DM Sans', sans-serif;
+}
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+  to   { transform: translateX(-50%) translateY(0);    opacity: 1; }
+}
+</style>
+<div id="offline-indicator" style="display:none;">
+  📴 Offline — using cached version
+</div>
+</body>
+</html>
